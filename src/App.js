@@ -1,152 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function Portfolio() {
   const [currentPage, setCurrentPage] = useState("home");
   const [selectedProject, setSelectedProject] = useState(null);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showHero, setShowHero] = useState(false);
-  const [splitAnimation, setSplitAnimation] = useState(false);
-  const [startFlyOff, setStartFlyOff] = useState(false);
-  const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
-    // Check if animation has been shown this session
-    if (window.sessionAnimationShown) {
-      setAnimationComplete(true);
-      setShowHero(true);
-      return;
-    }
-
-    // Spinning animation (slower)
-    const spinInterval = setInterval(() => {
-      setRotation((prev) => prev + 3);
-    }, 16);
-
-    // After 2 seconds, stop spinning
-    const spinTimer = setTimeout(() => {
-      clearInterval(spinInterval);
-
-      // Pause briefly, then split
-      setTimeout(() => {
-        setSplitAnimation(true);
-
-        // Start fading in content RIGHT AWAY when split begins
-        setShowHero(true);
-
-        // Small delay before flying off
-        setTimeout(() => {
-          setStartFlyOff(true);
-
-          // Play whoosh sound
-          const audio = new Audio(
-            "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVKzo7rFgGQc+ltryxnMpBSp+zPLaizsIGGS56ueXSwwKT6bi8LJnHgU7k9jzyn0vBSh6yPDajkELEly16PCmWBULRp3e87pqJAUuhM/z1YU2Bhxqvu7mnEoODlOq5O+zYBoGPJPY88p9LgUofMny2Ys+CRdiv+zol04NCE+k4/C1aR4FO5HY88qALwUmeMjw244/CxFat+nvpVkVCkSb3fO7biMGLYHO89WGNwYbab3u5p1LDg1Rp+Pvs2IaBjuR1/PMfy4FJ3nH8dqLPgkWYb/s6ZdPDQdOouLwtmkeBS2Bze7ajTsHGmi77OicSQ0NUKXi77NiGgY7kdfy0H4uBSh4yPDajkELEVqz6fCnWRUKRJrc8r5tIwUugc3z1YU2BRxovO3mn0sODFCm4u+zYRoGOpHY88p/LgUoecjw2o5BCRJaserupVkUCkOa2/O+bSMGLYDO89WFNgYcaLzt5p1LDg1Qp+Lvs2IaBzqR2PPKfy4FKXnI8NqOQQsRWrLp76VZFApDmtvzvm0jBi2Azv"
-          );
-          audio.volume = 0.3;
-          audio.play().catch(() => {});
-
-          // Complete animation after split flies off
-          setTimeout(() => {
-            setAnimationComplete(true);
-            window.sessionAnimationShown = true;
-          }, 1700);
-        }, 50);
-      }, 300);
-    }, 2000);
-
-    return () => {
-      clearInterval(spinInterval);
-      clearTimeout(spinTimer);
-    };
+    setAnimationComplete(true);
+    setShowHero(true);
+    window.sessionAnimationShown = true;
   }, []);
 
   return (
     <div className="min-h-screen bg-black overflow-hidden">
-      {/* Loading Animation */}
-      {!animationComplete && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          {!splitAnimation ? (
-            // Complete spinning head before split
-            <div
-              className="w-96 h-96 flex items-center justify-center"
-              style={{
-                transform: `rotate(${rotation}deg)`,
-                transition: "none",
-              }}
-            >
-              <div className="w-96 h-96 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                <div
-                  className="text-[12rem]"
-                  style={{ transform: `rotate(${-rotation}deg)` }}
-                ></div>
-              </div>
-            </div>
-          ) : (
-            // Split halves flying off
-            <>
-              {/* Top Half */}
-              <div
-                className="absolute w-96 h-48 overflow-hidden"
-                style={{
-                  transform: startFlyOff
-                    ? "translateY(-200vh)"
-                    : "translateY(0)",
-                  transition: startFlyOff ? "transform 1.5s ease-in" : "none",
-                  top: "calc(50% - 192px)",
-                  left: "calc(50% - 192px)",
-                }}
-              >
-                <div className="w-96 h-96 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                  <div className="text-[12rem]"></div>
-                </div>
-              </div>
-
-              {/* Bottom Half */}
-              <div
-                className="absolute w-96 h-48 overflow-hidden"
-                style={{
-                  transform: startFlyOff
-                    ? "translateY(200vh)"
-                    : "translateY(0)",
-                  transition: startFlyOff ? "transform 1.5s ease-in" : "none",
-                  top: "calc(50%)",
-                  left: "calc(50% - 192px)",
-                }}
-              >
-                <div
-                  className="w-96 h-96 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center"
-                  style={{ marginTop: "-192px" }}
-                >
-                  <div className="text-[12rem]"></div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Main Content */}
       {showHero && (
-        <div
-          className={`transition-opacity duration-[3500ms] ease-in-out ${
-            showHero ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {/* Navigation */}
+        <div className="opacity-100">
           <nav className="fixed top-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex justify-between items-center">
                 <button
-                  onClick={() => setCurrentPage("home")}
+                  onClick={() => {
+                    setSelectedProject(null);
+                    setCurrentPage("home");
+                  }}
                   className="text-xl font-bold text-white hover:text-gray-300 transition-colors"
                 >
                   Portfolio
                 </button>
                 <div className="flex gap-8">
                   <button
-                    onClick={() => setCurrentPage("projects")}
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("writing");
+                    }}
+                    className={`${
+                      currentPage === "writing" ||
+                      currentPage === "writing-detail"
+                        ? "text-white"
+                        : "text-gray-400"
+                    } hover:text-white transition-colors`}
+                  >
+                    Writing
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("projects");
+                    }}
                     className={`${
                       currentPage === "projects" ||
-                      currentPage === "project-detail"
+                      currentPage === "projects-detail"
                         ? "text-white"
                         : "text-gray-400"
                     } hover:text-white transition-colors`}
@@ -154,7 +58,38 @@ export default function Portfolio() {
                     Projects
                   </button>
                   <button
-                    onClick={() => setCurrentPage("about")}
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("internship");
+                    }}
+                    className={`${
+                      currentPage === "internship" ||
+                      currentPage === "internship-detail"
+                        ? "text-white"
+                        : "text-gray-400"
+                    } hover:text-white transition-colors`}
+                  >
+                    Internship
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("rocketry");
+                    }}
+                    className={`${
+                      currentPage === "rocketry" ||
+                      currentPage === "rocketry-detail"
+                        ? "text-white"
+                        : "text-gray-400"
+                    } hover:text-white transition-colors`}
+                  >
+                    Rocketry
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("about");
+                    }}
                     className={`${
                       currentPage === "about" ? "text-white" : "text-gray-400"
                     } hover:text-white transition-colors`}
@@ -162,15 +97,10 @@ export default function Portfolio() {
                     About
                   </button>
                   <button
-                    onClick={() => setCurrentPage("skills")}
-                    className={`${
-                      currentPage === "skills" ? "text-white" : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Skills
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage("contact")}
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setCurrentPage("contact");
+                    }}
                     className={`${
                       currentPage === "contact" ? "text-white" : "text-gray-400"
                     } hover:text-white transition-colors`}
@@ -182,18 +112,34 @@ export default function Portfolio() {
             </div>
           </nav>
 
-          {/* Page Content with fade transition */}
           <div className="pt-20">
             {currentPage === "home" && <HomePage onNavigate={setCurrentPage} />}
-            {currentPage === "projects" && !selectedProject && (
-              <ProjectsPage
-                onSelectProject={(project) => {
-                  setSelectedProject(project);
-                  setCurrentPage("project-detail");
+            {currentPage === "writing" && (
+              <WritingPage
+                onSelectProject={(p) => {
+                  setSelectedProject(p);
+                  setCurrentPage("writing-detail");
                 }}
               />
             )}
-            {currentPage === "project-detail" && selectedProject && (
+            {currentPage === "writing-detail" && selectedProject && (
+              <ProjectDetailPage
+                project={selectedProject}
+                onBack={() => {
+                  setSelectedProject(null);
+                  setCurrentPage("writing");
+                }}
+              />
+            )}
+            {currentPage === "projects" && (
+              <ProjectsPage
+                onSelectProject={(p) => {
+                  setSelectedProject(p);
+                  setCurrentPage("projects-detail");
+                }}
+              />
+            )}
+            {currentPage === "projects-detail" && selectedProject && (
               <ProjectDetailPage
                 project={selectedProject}
                 onBack={() => {
@@ -202,8 +148,41 @@ export default function Portfolio() {
                 }}
               />
             )}
+            {currentPage === "internship" && (
+              <InternshipPage
+                onSelectProject={(p) => {
+                  setSelectedProject(p);
+                  setCurrentPage("internship-detail");
+                }}
+              />
+            )}
+            {currentPage === "internship-detail" && selectedProject && (
+              <ProjectDetailPage
+                project={selectedProject}
+                onBack={() => {
+                  setSelectedProject(null);
+                  setCurrentPage("internship");
+                }}
+              />
+            )}
+            {currentPage === "rocketry" && (
+              <RocketryPage
+                onSelectProject={(p) => {
+                  setSelectedProject(p);
+                  setCurrentPage("rocketry-detail");
+                }}
+              />
+            )}
+            {currentPage === "rocketry-detail" && selectedProject && (
+              <ProjectDetailPage
+                project={selectedProject}
+                onBack={() => {
+                  setSelectedProject(null);
+                  setCurrentPage("rocketry");
+                }}
+              />
+            )}
             {currentPage === "about" && <AboutPage />}
-            {currentPage === "skills" && <SkillsPage />}
             {currentPage === "contact" && <ContactPage />}
           </div>
         </div>
@@ -214,24 +193,24 @@ export default function Portfolio() {
 
 function HomePage({ onNavigate }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 animate-fadeIn">
+    <div className="min-h-screen flex items-center justify-center px-6">
       <div className="text-center max-w-4xl">
         <h1 className="text-6xl md:text-7xl font-bold mb-6 text-white">
           Arjun Reddy
         </h1>
         <p className="text-2xl md:text-3xl text-gray-300 mb-8">
-          Troy Tech High school student and IB Diploma Candidate
+          Troy Tech High School Student & IB Diploma Candidate
         </p>
         <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
           Passionate about Aerospace, Robotics, Engineering, Physics and
-          Astronomy.
+          Astronomy
         </p>
         <div className="flex gap-4 justify-center">
           <button
-            onClick={() => onNavigate("projects")}
+            onClick={() => onNavigate("writing")}
             className="px-8 py-3 bg-white hover:bg-gray-200 text-black font-semibold transition-colors"
           >
-            View Projects
+            View Writing
           </button>
           <button
             onClick={() => onNavigate("contact")}
@@ -245,220 +224,129 @@ function HomePage({ onNavigate }) {
   );
 }
 
+const writingProjects = [
+  {
+    id: 1,
+    title:
+      "The Bottleneck of Innovation: Hardware, Software and the Limits of Human Ingenuity",
+    category: "Research",
+    thumbnail: "📄",
+    description: "Scholastic '24",
+    fullDescription:
+      "The limits of artificial intelligence are examined by contrasting computational accuracy with human creativity and adaptability.",
+    pdfs: [
+      {
+        name: "Arjun - Scholastic '24.pdf",
+        url: "https://drive.google.com/file/d/1uc2ep6vfzeRKHL6XhR2nXwMgHz_cbXUg/view?usp=sharing",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Drones: Evolution, Capabilities, and Future Applications",
+    category: "Research",
+    thumbnail: "📄",
+    description: "OMNI BLOG",
+    fullDescription:
+      "An exploration of drone technology, from historical development to modern applications.",
+    pdfs: [
+      {
+        name: "Drones Paper.pdf",
+        url: "https://drive.google.com/file/d/1zJbDGDNfPDP1882ryQu1TfbuajNmT6Nc/view?usp=sharing",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title:
+      "Investigating the Relationship Between Initial Velocity and Stopping Distance",
+    category: "Research",
+    thumbnail: "📄",
+    description: "IB Physics IA",
+    fullDescription:
+      "A physics investigation examining how initial velocity affects stopping distance.",
+    pdfs: [
+      {
+        name: "Physics IA.pdf",
+        url: "https://drive.google.com/file/d/1VB5-5el0c-3EaR5qWrfkCuQXEm6RiWg_/view?usp=sharing",
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "AI and the U.S. Economy: Five-Year Scenarios",
+    category: "Research",
+    thumbnail: "📄",
+    description: "Journal of Student Research",
+    fullDescription:
+      "Analysis of AI's impact on labor, capital, and ecological factors.",
+    pdfs: [
+      {
+        name: "JSR AI Manufacturing.pdf",
+        url: "https://drive.google.com/file/d/1KNRMS5mNbsGIS5fnG3ODaCxrcZuZCm1E/view?usp=sharing",
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Lead Bending Press Modification for Legacy IC Packaging",
+    category: "Research",
+    thumbnail: "📄",
+    description: "Independent Publication",
+    fullDescription: "Engineering design report for IC packaging systems.",
+    pdfs: [
+      {
+        name: "Lead Bending Report.pdf",
+        url: "https://drive.google.com/file/d/1ecIrSu92kPwKj21kk-grio0wYt_Amajp/view?usp=sharing",
+      },
+    ],
+  },
+];
+
+function WritingPage({ onSelectProject }) {
+  return (
+    <div className="min-h-screen px-6 py-12">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-5xl font-bold text-white mb-4">Writing</h1>
+        <p className="text-xl text-gray-300 mb-12">
+          Research papers and publications
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {writingProjects.map((p) => (
+            <div
+              key={p.id}
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              onClick={() => onSelectProject(p)}
+            >
+              <div className="p-8">
+                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-2xl font-semibold text-white mb-3">
+                  {p.title}
+                </h3>
+                <p className="text-gray-400">{p.description}</p>
+                <div className="mt-4 text-white group-hover:text-gray-300 transition-colors">
+                  Click to view details →
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProjectsPage({ onSelectProject }) {
   const projects = [
     {
       id: 1,
-      title:
-        "The Bottleneck of Innovation: Hardware, software and the Limits of Human Ingenuity",
-      category: "Research",
+      title: "Design Technology Portfolio",
+      category: "IB",
       thumbnail: "📄",
-      description: "Scholastic '24",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
+      description: "IB Design Tech",
       fullDescription:
-        "The limits of artificial intelligence are examined by contrasting computational accuracy with human creativity and adaptability. Examples from underwater exploration, medicine, and engineering illustrate how AI excels in structured, repeatable tasks, while humans perform better in uncertain and high-stakes environments. A proposed approach emphasizes integrating AI systems with human oversight to leverage computational efficiency while preserving adaptability and creative problem-solving.",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
-      pdfs: [
-        {
-          name: "Arjun - Scholastic '24.pdf",
-          url: "https://drive.google.com/file/d/1uc2ep6vfzeRKHL6XhR2nXwMgHz_cbXUg/view?usp=sharing",
-        },
-      ],
-      stlFile: null,
-    },
-    {
-      id: 2,
-      title: "Drones: Evolution, Capabilities, and Future Applications",
-      category: "Research",
-      thumbnail: "📄",
-      description: "OMNI BLOG",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
-      fullDescription: "place holder",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
-      pdfs: [
-        {
-          name: "Drones: Evolution, Capabilities, and Future Applications.pdf",
-          url: "https://drive.google.com/file/d/1zJbDGDNfPDP1882ryQu1TfbuajNmT6Nc/view?usp=sharing",
-        },
-      ],
-      stlFile: null,
-    },
-    {
-      id: 3,
-      title:
-        "Investigating the Relationship Between Initial Velocity and Stopping Distance of a Rolling Object",
-      category: "Research",
-      thumbnail: "📄",
-      description: "IB PHYSICS IA",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
-      fullDescription: "place holder",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
-      pdfs: [
-        {
-          name: "Investigating the Relationship Between Initial Velocity and Stopping Distance of a Rolling Object.pdf",
-          url: "https://drive.google.com/file/d/1VB5-5el0c-3EaR5qWrfkCuQXEm6RiWg_/view?usp=sharing",
-        },
-      ],
-      stlFile: null,
-    },
-    {
-      id: 4,
-      title:
-        "Artificial Intelligence and the U.S. Economy: Five-Year Scenarios for Labor, Capital, and Ecological Impact",
-      category: "Research",
-      thumbnail: "📄",
-      description: "Journal of Student Research Paper",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
-      fullDescription: "place holder",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
-      pdfs: [
-        {
-          name: "JSR AI Manufacturing.pdf",
-          url: "https://drive.google.com/file/d/1KNRMS5mNbsGIS5fnG3ODaCxrcZuZCm1E/view?usp=sharing",
-        },
-      ],
-      stlFile: null,
-    },
-    {
-      id: 5,
-      title: "Lead Bending Press Modification for Legacy IC Packaging Systems",
-      category: "Research",
-      thumbnail: "📄",
-      description: "Independent Publication",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
-      fullDescription: "place holder",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
-      pdfs: [
-        {
-          name: "Lead_Bending_Design_Report.pdf",
-          url: "https://drive.google.com/file/d/1ecIrSu92kPwKj21kk-grio0wYt_Amajp/view?usp=sharing",
-        },
-      ],
-      stlFile: null,
-    },
-    {
-      id: 6,
-      title: "Design Tech",
-      category: "International Baccalaureate",
-      thumbnail: "📄",
-      description: "",
-      hasCAD: false, // Show 3D viewer button
-      hasDesignProcess: false, // Show design process section
-      hasTechnologies: false, // Show technologies section
-      hasFeatures: false, // Show key features section
-      hasChallenges: false, // Show challenges & solutions
-      hasGallery: false, // Show image gallery (auto-detects if images exist)
-      hasPDFs: true, // Show PDF section (auto-detects if PDFs exist)
-      fullDescription: "place holder",
-      images: [
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+1",
-          caption: "Design concept",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+2",
-          caption: "Prototype",
-        },
-        {
-          url: "https://via.placeholder.com/800x600/333/fff?text=Image+3",
-          caption: "Final product",
-        },
-      ],
+        "IB Design Technology coursework and project documentation.",
       pdfs: [
         {
           name: "Criterion A.pdf",
@@ -477,37 +365,64 @@ function ProjectsPage({ onSelectProject }) {
           url: "https://drive.google.com/file/d/1ePvsfa9M70u4tGl5_neJystbBHTGBQu1/view?usp=sharing",
         },
       ],
-      stlFile: null,
+      show3DViewer: false,
+    },
+    {
+      id: 2,
+      title: "OMNI Drones",
+      thumbnail: "🕹️",
+      description: "Drone Design - 3D Models",
+      fullDescription: "CAD models and 3D designs for OMNI Drone Initiative.",
+      pdfs: [],
+      show3DViewer: true,
+      models3D: [
+        {
+          title: "Full Drone Assembly OMNI",
+          modelUrl:
+            "https://sketchfab.com/models/4a00106acf1949aa8a40e82bf2904fb5/embed",
+          viewUrl:
+            "https://sketchfab.com/3d-models/full-drone-assembly-omni-4a00106acf1949aa8a40e82bf2904fb5",
+        },
+        {
+          title: "Drone Camera Enclosure OMNI",
+          modelUrl:
+            "https://sketchfab.com/models/778a201700d2444ba27c51e32da2f03c/embed",
+          viewUrl:
+            "https://sketchfab.com/3d-models/drone-camera-enclosure-omni-778a201700d2444ba27c51e32da2f03c",
+        },
+        {
+          title: "Drone Assembly OMNI",
+          modelUrl:
+            "https://sketchfab.com/models/850a45417d7d43d184fa0b1caba203ac/embed",
+          viewUrl:
+            "https://sketchfab.com/3d-models/drone-assembly-omni-850a45417d7d43d184fa0b1caba203ac",
+        },
+      ],
     },
   ];
 
   return (
-    <div className="min-h-screen px-6 py-12 animate-fadeIn">
+    <div className="min-h-screen px-6 py-12">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white mb-4">Projects</h1>
         <p className="text-xl text-gray-300 mb-12">
-          Explore my work in STEM and making
+          Engineering and technical projects
         </p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.map((project) => (
+          {projects.map((p) => (
             <div
-              key={project.id}
-              className="group relative bg-gray-900 overflow-hidden border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
-              onClick={() => onSelectProject(project)}
+              key={p.id}
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              onClick={() => onSelectProject(p)}
             >
               <div className="p-8">
-                <div className="text-8xl mb-6 text-center">
-                  {project.thumbnail}
-                </div>
-                <div className="text-sm text-gray-400 mb-2">
-                  {project.category}
-                </div>
+                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
                 <h3 className="text-2xl font-semibold text-white mb-3">
-                  {project.title}
+                  {p.title}
                 </h3>
-                <p className="text-gray-400">{project.description}</p>
-                <div className="mt-4 text-white group-hover:text-gray-300 transition-colors">
+                <p className="text-gray-400">{p.description}</p>
+                <div className="mt-4 text-white group-hover:text-gray-300">
                   Click to view details →
                 </div>
               </div>
@@ -515,106 +430,322 @@ function ProjectsPage({ onSelectProject }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
 
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-in;
-        }
-        .duration-2000 {
-          transition-duration: 2000ms;
-        }
-      `}</style>
+function InternshipPage({ onSelectProject }) {
+  const projects = [
+    {
+      id: 1,
+      title: "3D Models",
+      category: "Internship",
+      thumbnail: "🖥️",
+      description: "CAD Designs for Chip Apparatus",
+      fullDescription: "...",
+      pdfs: [],
+      show3DViewer: true,
+      models3D: [
+        {
+          title: "Flat Lead Package Die Attachments",
+          modelUrl:
+            "https://sketchfab.com/models/1c5a25dc4b254c40a9e914413f0c9f87/embed",
+          viewUrl:
+            "https://sketchfab.com/3d-models/68-flat-lead-package-die-attachments-1c5a25dc4b254c40a9e914413f0c9f87",
+        },
+        {
+          title: "MALE DIE MASTER",
+          modelUrl:
+            "https://sketchfab.com/models/f3751214c800481ab3478c3836003257/embed",
+        },
+        {
+          title: "FEMALE DIE MASTER",
+          modelUrl:
+            "https://sketchfab.com/models/61c14cc3853e4f31b214502a4530e802/embed",
+        },
+        {
+          title: "MALE DIE (68 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/c296583d43204232a836701282f64470/embed",
+        },
+        {
+          title: "MALE DIE (64 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/a7950a0fa85e41db92452de2158f9178/embed",
+        },
+        {
+          title: "MALE DIE (Ceramic Double)",
+          modelUrl:
+            "https://sketchfab.com/models/b2e2320350bc445598ed16a91267a460/embed",
+        },
+        {
+          title: "MALE DIE (84 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/d8c43c453c9c4cb6bcb4262c1092739c/embed",
+        },
+        {
+          title: "FEMALE DIE (Ceramic Dual)",
+          modelUrl:
+            "https://sketchfab.com/models/909ef00379ec45929e5a58e000d75a36/embed",
+        },
+        {
+          title: "FEMALE DIE (64 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/7111e012bf284cb7995b3d485b4aeeee/embed",
+        },
+        {
+          title: "FEMALE DIE (68 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/0441093bf907459989044f8a3a499aff/embed",
+        },
+        {
+          title: "FEMALE DIE (84 FLAT)",
+          modelUrl:
+            "https://sketchfab.com/models/acdbbb86c2f442429fe786ba80db2900/embed",
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: "Technical Drawings",
+      category: "Internship",
+      thumbnail: "📐",
+      description: "technical drawings (die stamp)",
+      fullDescription: "technical drawings (die stamp)",
+      showImageGallery: true,
+      images: [
+        {
+          url: "https://drive.google.com/thumbnail?id=1wLGH6kt2pzSLFJH6vKKcWjU3CVcpMtad&sz=w1000",
+          caption: "Female Die 64 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=15yFGFkw-DqvB_AEFcpBGCQuhhDPP7b5K&sz=w1000",
+          caption: "Female Die 68 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=16og2R0FHP_8L9uRPw-nsotTkZWURDJi7&sz=w1000",
+          caption: "Female Die 84 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1VLLQJZdwd02MuKadIW9SGhQZv68fbCEB&sz=w1000",
+          caption: "Female Die Ceramic Dual",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1XMPUvhr3FpODvkCVmuLbwwizBgnrsPMW&sz=w1000",
+          caption: "Male Die 64 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1anwYGh_rf2TUa1pGsZ1IqxwyD3SlDjAT&sz=w1000",
+          caption: "Male Die 68 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1gjLrHp7T4VCKV0I_s7RPLuu8aFCuL2jH&sz=w1000",
+          caption: "Male Die 84 Flat",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1hP8BgmiHfxqUW-RzTUN-THACVdcJALPR&sz=w1000",
+          caption: "Male Die Ceramic Dual",
+        },
+      ],
+      show3DViewer: false,
+    },
+    {
+      id: 3,
+      title: "PCB Design",
+      category: "Intership",
+      thumbnail: "🔌",
+      description: "Primary Connection for UVEX Project",
+      fullDescription: "...",
+      pdfs: [],
+      showImageGallery: true,
+      images: [
+        {
+          url: "https://drive.google.com/thumbnail?id=1SkkjyggvqC_XpS1oZTuSV8A8JhVCyw_j&sz=w1000",
+          caption: "PCB",
+        },
+      ],
+      show3DViewer: false,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen px-6 py-12">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-5xl font-bold text-white mb-4">Internship</h1>
+        <p className="text-xl text-gray-300 mb-12">
+          Professional experience and work
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.map((p) => (
+            <div
+              key={p.id}
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              onClick={() => onSelectProject(p)}
+            >
+              <div className="p-8">
+                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-2xl font-semibold text-white mb-3">
+                  {p.title}
+                </h3>
+                <p className="text-gray-400">{p.description}</p>
+                <div className="mt-4 text-white group-hover:text-gray-300">
+                  Click to view details →
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RocketryPage({ onSelectProject }) {
+  const projects = [
+    {
+      id: 1,
+      title: "Rocketry Fuel",
+      category: "Rocketry",
+      thumbnail: "🚀",
+      description: "Making and Testing Rocket Fuel",
+      fullDescription: "Details here.",
+      pdfs: [],
+      showImageGallery: true,
+      images: [
+        {
+          url: "https://drive.google.com/thumbnail?id=105pm2ttlGDJqlORqEXzg-TJAFDQkZuWU&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=10adZU9sNHsnq-88Fu3BKNfD0RD68nl7m&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1DCXluAl61HVaIOPlFLym61VQTXAdZuyX&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1Lg5aaz9TAin6boKEyIhZsKuTsXxdpMuC&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1PrClLSHwk_O0judv2tEyfI6Yq9_ExOpA&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1gWZ5yIoBRyd4P1JKHp0Q2rX9weJbIhid&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1h78G_MqCbeakaX-SbbCx4YavUNrxkcUp&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1mXpMkp3KKvB5YLL7qMhEdwTgvd16YlsE&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/thumbnail?id=1yvEWxH_FqYfSrpYfKomeqUgE6OP9oWll&sz=w1000",
+          caption: "",
+          type: "image",
+        },
+        {
+          url: "https://drive.google.com/file/d/1AoqPvHhuzM0VOYvowLf3J-kYF3YxrXmz/preview",
+          caption: "",
+          type: "video",
+        },
+        {
+          url: "https://drive.google.com/file/d/1C_fRNonDSQ5pDNJ-1138G_kGFc1i3Yq8/preview",
+          caption: "",
+          type: "video",
+        },
+        {
+          url: "https://drive.google.com/file/d/1iDyJ004UAjwG6btcP2t3_Se5v-PcPvOT/preview",
+          caption: "",
+          type: "video",
+        },
+        {
+          url: "https://drive.google.com/file/d/1ii9q67Ft7tnjJBJ4hW_SLkEofS8_Xusb/preview",
+          caption: "",
+          type: "video",
+        },
+      ],
+    },
+  ];
+
+  return (
+    <div className="min-h-screen px-6 py-12">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-5xl font-bold text-white mb-4">Rocketry</h1>
+        <p className="text-xl text-gray-300 mb-12">
+          Aerospace and rocketry projects
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.map((p) => (
+            <div
+              key={p.id}
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              onClick={() => onSelectProject(p)}
+            >
+              <div className="p-8">
+                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-2xl font-semibold text-white mb-3">
+                  {p.title}
+                </h3>
+                <p className="text-gray-400">{p.description}</p>
+                <div className="mt-4 text-white group-hover:text-gray-300">
+                  Click to view details →
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
 function ProjectDetailPage({ project, onBack }) {
-  const [viewerWindow, setViewerWindow] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [windowPos, setWindowPos] = useState({ x: 100, y: 100 });
   const [visibleSections, setVisibleSections] = useState(new Set());
-  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
             setVisibleSections(
-              (prev) => new Set([...prev, entry.target.dataset.section])
+              (prev) => new Set([...prev, e.target.dataset.section])
             );
           }
         });
       },
       { threshold: 0.1 }
     );
-
-    document.querySelectorAll("[data-section]").forEach((el) => {
-      observer.observe(el);
-    });
-
+    document
+      .querySelectorAll("[data-section]")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  const handleMouseDown = (e) => {
-    if (e.target.classList.contains("drag-handle")) {
-      setIsDragging(true);
-      setDragOffset({
-        x: e.clientX - windowPos.x,
-        y: e.clientY - windowPos.y,
-      });
-    }
-  };
-
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      setWindowPos({
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y,
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
-  }, [isDragging, dragOffset]);
-
-  const openViewer = () => {
-    setViewerWindow(project);
-    setWindowPos({
-      x: window.innerWidth / 2 - 300,
-      y: window.innerHeight / 2 - 250,
-    });
-  };
-
   return (
-    <div className="min-h-screen px-6 py-12 animate-fadeIn">
+    <div className="min-h-screen px-6 py-12">
       <div className="max-w-5xl mx-auto">
-        {/* Back Button */}
         <button
           onClick={onBack}
-          className="mb-8 text-white hover:text-gray-300 flex items-center gap-2 transition-colors"
+          className="mb-8 text-white hover:text-gray-300 flex items-center gap-2"
         >
-          ← Back to Projects
+          ← Back
         </button>
-
-        {/* Project Header */}
         <div
           className={`text-center mb-12 transition-all duration-700 ${
             visibleSections.has("header")
@@ -629,10 +760,8 @@ function ProjectDetailPage({ project, onBack }) {
             {project.title}
           </h1>
         </div>
-
-        {/* Project Overview Card */}
         <div
-          className={`bg-gray-900 p-8 border border-gray-800 mb-8 transition-all duration-700 delay-100 ${
+          className={`bg-gray-900 p-8 border border-gray-800 mb-8 transition-all duration-700 ${
             visibleSections.has("overview")
               ? "opacity-100 translate-x-0"
               : "opacity-0 -translate-x-20"
@@ -645,183 +774,59 @@ function ProjectDetailPage({ project, onBack }) {
           <p className="text-gray-300 text-lg leading-relaxed mb-6">
             {project.fullDescription}
           </p>
-
-          {project.hasCAD && (
-            <button
-              onClick={openViewer}
-              className="bg-white hover:bg-gray-200 text-black px-8 py-3 font-semibold transition-colors text-lg"
-            >
-              Open 3D Viewer
-            </button>
-          )}
         </div>
 
-        {/* Design Process Card */}
-        {project.hasDesignProcess && (
-          <div
-            className={`bg-gray-900 p-8 border border-gray-800 mb-8 transition-all duration-700 delay-200 ${
-              visibleSections.has("process")
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 translate-x-20"
-            }`}
-            data-section="process"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              Design Process
-            </h2>
-            <div className="space-y-4 text-gray-300">
-              <div className="flex items-start gap-4">
-                <div className="text-2xl">1️⃣</div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">
-                    Concept & Research
-                  </h3>
-                  <p>Initial ideation and requirements gathering phase.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="text-2xl">2️⃣</div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">
-                    Design & Prototyping
-                  </h3>
-                  <p>CAD modeling and initial prototype development.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="text-2xl">3️⃣</div>
-                <div>
-                  <h3 className="font-semibold text-white mb-2">
-                    Testing & Iteration
-                  </h3>
-                  <p>Real-world testing and design refinements.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Technical Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {project.hasTechnologies && (
+        {project.show3DViewer &&
+          project.models3D &&
+          project.models3D.length > 0 && (
             <div
-              className={`bg-gray-900 p-6 border border-gray-800 transition-all duration-700 delay-300 ${
-                visibleSections.has("tech")
+              className={`mb-8 transition-all duration-700 ${
+                visibleSections.has("3dmodel")
                   ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-20"
+                  : "opacity-0 translate-y-10"
               }`}
-              data-section="tech"
+              data-section="3dmodel"
             >
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Technologies Used
-              </h3>
-              <ul className="text-gray-300 space-y-2">
-                <li>• CAD Software (Fusion 360, SolidWorks)</li>
-                <li>• 3D Printing (FDM/SLA)</li>
-                <li>• Microcontrollers (Arduino, ESP32)</li>
-                <li>• Programming (Python, C++)</li>
-              </ul>
+              <h2 className="text-2xl font-semibold text-white mb-6">
+                3D Models
+              </h2>
+              <div className="space-y-6">
+                {project.models3D.map((model, i) => (
+                  <div key={i}>
+                    <h3 className="text-xl font-semibold text-white mb-3">
+                      {model.title}
+                    </h3>
+                    <ModelViewer
+                      modelUrl={model.modelUrl}
+                      viewUrl={model.viewUrl}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
-          {project.hasFeatures && (
+        {project.showImageGallery &&
+          project.images &&
+          project.images.length > 0 && (
             <div
-              className={`bg-gray-900 p-6 border border-gray-800 transition-all duration-700 delay-400 ${
-                visibleSections.has("features")
+              className={`mb-8 transition-all duration-700 ${
+                visibleSections.has("images")
                   ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-20"
+                  : "opacity-0 translate-y-10"
               }`}
-              data-section="features"
+              data-section="images"
             >
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Key Features
-              </h3>
-              <ul className="text-gray-300 space-y-2">
-                <li>• Custom engineered components</li>
-                <li>• Optimized for performance</li>
-                <li>• Modular design approach</li>
-                <li>• Real-world tested solution</li>
-              </ul>
+              <h2 className="text-2xl font-semibold text-white mb-6">
+                Project Images
+              </h2>
+              <ImageGallery images={project.images} />
             </div>
           )}
-        </div>
 
-        {/* Challenges & Solutions Card */}
-        {project.hasChallenges && (
-          <div
-            className={`bg-gray-900 p-8 border border-gray-800 mb-8 transition-all duration-700 delay-500 ${
-              visibleSections.has("challenges")
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-20"
-            }`}
-            data-section="challenges"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-4">
-              Challenges & Solutions
-            </h2>
-            <div className="space-y-4 text-gray-300">
-              <div>
-                <h3 className="font-semibold text-white mb-2">
-                  Challenge: Design Constraints
-                </h3>
-                <p>
-                  Solution: Iterative prototyping and testing led to an optimal
-                  design balance.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-2">
-                  Challenge: Manufacturing Complexity
-                </h3>
-                <p>
-                  Solution: Simplified assembly process with modular components.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Image Gallery */}
-        {project.hasGallery && project.images && project.images.length > 0 && (
-          <div
-            className={`mb-8 transition-all duration-700 delay-600 ${
-              visibleSections.has("gallery")
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-20"
-            }`}
-            data-section="gallery"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-6">
-              Project Gallery
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {project.images.map((image, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-900 border-2 border-gray-800 overflow-hidden cursor-pointer hover:border-white transition-all duration-300 group relative"
-                  onClick={() => setSelectedImage(image)}
-                >
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                    <div className="text-white text-4xl">🔍</div>
-                  </div>
-                  <img
-                    src={image.url}
-                    alt={image.caption}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="p-4 bg-gray-900">
-                    <p className="text-gray-300 text-sm">{image.caption}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* PDF Documents */}
         {project.pdfs && project.pdfs.length > 0 && (
           <div
-            className={`mb-8 transition-all duration-700 delay-700 ${
+            className={`mb-8 transition-all duration-700 ${
               visibleSections.has("docs")
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 translate-x-20"
@@ -832,9 +837,9 @@ function ProjectDetailPage({ project, onBack }) {
               Project Files
             </h2>
             <div className="space-y-3">
-              {project.pdfs.map((pdf, idx) => (
+              {project.pdfs.map((pdf, i) => (
                 <a
-                  key={idx}
+                  key={i}
                   href={pdf.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -843,7 +848,7 @@ function ProjectDetailPage({ project, onBack }) {
                   <div className="flex items-center gap-4">
                     <div className="text-3xl">📄</div>
                     <div>
-                      <p className="text-white font-semibold group-hover:text-gray-300 transition-colors">
+                      <p className="text-white font-semibold group-hover:text-gray-300">
                         {pdf.name}
                       </p>
                       <p className="text-gray-400 text-sm">
@@ -851,128 +856,135 @@ function ProjectDetailPage({ project, onBack }) {
                       </p>
                     </div>
                   </div>
-                  <div className="text-gray-400 group-hover:text-white transition-colors">
-                    ↗
-                  </div>
+                  <div className="text-gray-400 group-hover:text-white">↗</div>
                 </a>
               ))}
             </div>
           </div>
         )}
       </div>
-
-      {/* Image Lightbox */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div
-            className="relative w-full h-full flex flex-col items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-8 right-8 text-white text-5xl hover:text-gray-300 z-10 w-16 h-16 flex items-center justify-center border-2 border-white hover:bg-white hover:text-black transition-colors"
-            >
-              ×
-            </button>
-            <div className="flex items-center justify-center max-w-7xl max-h-[85vh]">
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.caption}
-                className="max-w-full max-h-full object-contain"
-              />
-            </div>
-            <div className="mt-6 bg-black/80 px-8 py-4 border border-white">
-              <p className="text-white text-xl">{selectedImage.caption}</p>
-            </div>
-            <p className="text-gray-400 text-sm mt-4">
-              Click anywhere or press X to close
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Draggable 3D Viewer Window */}
-      {viewerWindow && (
-        <div
-          className="fixed bg-gray-900 border-2 border-white shadow-2xl z-50"
-          style={{
-            left: `${windowPos.x}px`,
-            top: `${windowPos.y}px`,
-            width: "600px",
-            height: "500px",
-          }}
-          onMouseDown={handleMouseDown}
-        >
-          {/* Window Header - Draggable */}
-          <div className="drag-handle bg-black px-4 py-3 border-b border-gray-800 flex justify-between items-center cursor-move">
-            <div>
-              <h3 className="text-white font-semibold">{viewerWindow.title}</h3>
-              <p className="text-xs text-gray-400">3D CAD Viewer</p>
-            </div>
-            <button
-              onClick={() => setViewerWindow(null)}
-              className="text-gray-400 hover:text-white text-2xl leading-none px-2"
-            >
-              ×
-            </button>
-          </div>
-
-          {/* 3D Viewer Content */}
-          <div className="p-4 h-[calc(100%-60px)]">
-            <div className="w-full h-full bg-black flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <div className="text-6xl mb-4">{viewerWindow.thumbnail}</div>
-                <p>3D STL Viewer will be here</p>
-                <p className="text-sm mt-2">
-                  Drag the header to move this window
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-in;
-        }
-        .drag-handle {
-          user-select: none;
-        }
-      `}</style>
     </div>
   );
 }
 
-function AboutPage() {
+function ModelViewer({ modelUrl, viewUrl }) {
   return (
-    <div className="min-h-screen px-6 py-12 animate-fadeIn">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-8">About Me</h1>
-        <p className="text-xl text-gray-300 leading-relaxed">
-          Content about your background, interests, and passion for STEM and
-          making will go here...
-        </p>
+    <div className="sketchfab-embed-wrapper bg-gray-900 border border-gray-800 overflow-hidden mb-6">
+      <iframe
+        title="3D Model"
+        frameBorder="0"
+        allowFullScreen
+        src={modelUrl}
+        className="w-full h-[500px]"
+      />
+      <div className="p-4 bg-gray-800 text-gray-300 text-sm">
+        <p>🖱️ Drag to rotate • Scroll to zoom</p>
       </div>
     </div>
   );
 }
 
-function SkillsPage() {
+function ImageGallery({ images }) {
+  const [selectedImage, setSelectedImage] = useState(null);
+
   return (
-    <div className="min-h-screen px-6 py-12 animate-fadeIn">
+    <>
+      <div className="bg-gray-900 border border-gray-800 p-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {images.map((image, i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden bg-gray-800 border border-gray-700 hover:border-white transition-all cursor-pointer"
+              onClick={() => setSelectedImage(image)}
+            >
+              {image.type === "video" ? (
+                <div className="relative w-full h-64 bg-gray-900">
+                  <img
+                    src={`https://drive.google.com/thumbnail?id=${
+                      image.url.split("/d/")[1].split("/")[0]
+                    }&sz=w400`}
+                    alt={image.caption || `Video ${i + 1}`}
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                    <div className="text-6xl text-white drop-shadow-lg"></div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                    <span className="text-white text-sm">
+                      Click to play video
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={image.url}
+                  alt={image.caption || `Image ${i + 1}`}
+                  className="w-full h-64 object-cover"
+                />
+              )}
+              {image.caption && (
+                <div className="p-3 bg-gray-800">
+                  <p className="text-gray-300 text-sm">{image.caption}</p>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                <span className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity">
+                  {image.type === "video" ? "▶️" : "🔍"}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex flex-col items-center justify-center p-8 overflow-y-auto"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 transition-colors z-10"
+          >
+            ✕
+          </button>
+          <div
+            className="flex flex-col items-center max-h-full w-full max-w-6xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {selectedImage.type === "video" ? (
+              <iframe
+                src={selectedImage.url}
+                className="w-full aspect-video"
+                style={{ maxHeight: "85vh" }}
+                allow="autoplay"
+                allowFullScreen
+              />
+            ) : (
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.caption || "Enlarged view"}
+                className="max-w-full max-h-[85vh] object-contain"
+              />
+            )}
+            {selectedImage.caption && (
+              <div className="text-center mt-4 text-white text-lg bg-black bg-opacity-50 px-4 py-2 rounded">
+                {selectedImage.caption}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function AboutPage() {
+  return (
+    <div className="min-h-screen px-6 py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-8">Skills</h1>
-        <p className="text-xl text-gray-300 mb-8">
-          Technical skills and tools you work with...
-        </p>
+        <h1 className="text-5xl font-bold text-white mb-8">About Me</h1>
+        <p className="text-xl text-gray-300">Content about you goes here...</p>
       </div>
     </div>
   );
@@ -980,10 +992,10 @@ function SkillsPage() {
 
 function ContactPage() {
   return (
-    <div className="min-h-screen px-6 py-12 animate-fadeIn">
+    <div className="min-h-screen px-6 py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold text-white mb-8">Contact</h1>
-        <p className="text-xl text-gray-300 mb-8">Get in touch with me...</p>
+        <p className="text-xl text-gray-300">Get in touch...</p>
       </div>
     </div>
   );
