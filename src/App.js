@@ -5,6 +5,7 @@ export default function Portfolio() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showHero, setShowHero] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setAnimationComplete(true);
@@ -12,96 +13,57 @@ export default function Portfolio() {
     window.sessionAnimationShown = true;
   }, []);
 
+  const handleNavigation = (page) => {
+    setSelectedProject(null);
+    setCurrentPage(page);
+    setMobileMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-black overflow-hidden">
       {showHero && (
         <div className="opacity-100">
           <nav className="fixed top-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-sm border-b border-gray-800">
-            <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex justify-between items-center">
                 <button
-                  onClick={() => {
-                    setSelectedProject(null);
-                    setCurrentPage("home");
-                  }}
-                  className="text-xl font-bold text-white hover:text-gray-300 transition-colors"
+                  onClick={() => handleNavigation("home")}
+                  className="text-lg sm:text-xl font-bold text-white hover:text-gray-300 transition-colors"
                 >
                   Portfolio
                 </button>
-                <div className="flex gap-8">
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setCurrentPage("writing");
-                    }}
-                    className={`${
-                      currentPage === "writing" ||
-                      currentPage === "writing-detail"
-                        ? "text-white"
-                        : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Writing
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setCurrentPage("projects");
-                    }}
-                    className={`${
-                      currentPage === "projects" ||
-                      currentPage === "projects-detail"
-                        ? "text-white"
-                        : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Projects
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setCurrentPage("internship");
-                    }}
-                    className={`${
-                      currentPage === "internship" ||
-                      currentPage === "internship-detail"
-                        ? "text-white"
-                        : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Internship
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setCurrentPage("rocketry");
-                    }}
-                    className={`${
-                      currentPage === "rocketry" ||
-                      currentPage === "rocketry-detail"
-                        ? "text-white"
-                        : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Rocketry
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setCurrentPage("contact");
-                    }}
-                    className={`${
-                      currentPage === "contact" ? "text-white" : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    Contact
-                  </button>
+                {/* Mobile menu button */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="md:hidden flex items-center text-white hover:text-gray-300 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                  </svg>
+                </button>
+                {/* Desktop menu */}
+                <div className="hidden md:flex gap-4 lg:gap-8">
+                  <NavButton currentPage={currentPage} page="writing" label="Writing" onNavigate={handleNavigation} />
+                  <NavButton currentPage={currentPage} page="projects" label="Projects" onNavigate={handleNavigation} />
+                  <NavButton currentPage={currentPage} page="internship" label="Internship" onNavigate={handleNavigation} />
+                  <NavButton currentPage={currentPage} page="rocketry" label="Rocketry" onNavigate={handleNavigation} />
+                  <NavButton currentPage={currentPage} page="contact" label="Contact" onNavigate={handleNavigation} />
                 </div>
               </div>
+              {/* Mobile menu */}
+              {mobileMenuOpen && (
+                <div className="md:hidden mt-4 pt-4 border-t border-gray-800 space-y-3">
+                  <NavButton currentPage={currentPage} page="writing" label="Writing" onNavigate={handleNavigation} mobile />
+                  <NavButton currentPage={currentPage} page="projects" label="Projects" onNavigate={handleNavigation} mobile />
+                  <NavButton currentPage={currentPage} page="internship" label="Internship" onNavigate={handleNavigation} mobile />
+                  <NavButton currentPage={currentPage} page="rocketry" label="Rocketry" onNavigate={handleNavigation} mobile />
+                  <NavButton currentPage={currentPage} page="contact" label="Contact" onNavigate={handleNavigation} mobile />
+                </div>
+              )}
             </div>
           </nav>
 
-          <div className="pt-20">
+          <div className="pt-16 sm:pt-20">
             {currentPage === "home" && <HomePage onNavigate={setCurrentPage} />}
             {currentPage === "writing" && (
               <WritingPage
@@ -180,30 +142,46 @@ export default function Portfolio() {
   );
 }
 
+function NavButton({ currentPage, page, label, onNavigate, mobile }) {
+  const isActive = currentPage === page || currentPage === `${page}-detail`;
+  const baseClass = `text-sm sm:text-base transition-colors ${
+    isActive ? "text-white font-semibold" : "text-gray-400"
+  } hover:text-white`;
+  
+  return (
+    <button
+      onClick={() => onNavigate(page)}
+      className={mobile ? `${baseClass} block w-full text-left py-2` : baseClass}
+    >
+      {label}
+    </button>
+  );
+}
+
 function HomePage({ onNavigate }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6">
       <div className="text-center max-w-4xl">
-        <h1 className="text-6xl md:text-7xl font-bold mb-6 text-white">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 text-white">
           Arjun Reddy
         </h1>
-        <p className="text-2xl md:text-3xl text-gray-300 mb-8">
+        <p className="text-lg sm:text-xl md:text-3xl text-gray-300 mb-6 sm:mb-8">
           Troy Tech High School Student & IB Diploma Candidate
         </p>
-        <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto">
           Passionate about Aerospace, Robotics, Engineering, Physics and
           Astronomy
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <button
             onClick={() => onNavigate("writing")}
-            className="px-8 py-3 bg-white hover:bg-gray-200 text-black font-semibold transition-colors"
+            className="px-6 sm:px-8 py-2 sm:py-3 bg-white hover:bg-gray-200 text-black font-semibold transition-colors text-sm sm:text-base"
           >
             View Writing
           </button>
           <button
             onClick={() => onNavigate("contact")}
-            className="px-8 py-3 border-2 border-white text-white hover:bg-white hover:text-black font-semibold transition-colors"
+            className="px-6 sm:px-8 py-2 sm:py-3 border-2 border-white text-white hover:bg-white hover:text-black font-semibold transition-colors text-sm sm:text-base"
           >
             Get in Touch
           </button>
@@ -294,27 +272,27 @@ const writingProjects = [
 
 function WritingPage({ onSelectProject }) {
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-4">Writing</h1>
-        <p className="text-xl text-gray-300 mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-4">Writing</h1>
+        <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12">
           Research papers and publications
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
           {writingProjects.map((p) => (
             <div
               key={p.id}
-              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[300px] sm:min-h-[400px]"
               onClick={() => onSelectProject(p)}
             >
-              <div className="p-8">
-                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
-                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
-                <h3 className="text-2xl font-semibold text-white mb-3">
+              <div className="p-6 sm:p-8">
+                <div className="text-6xl sm:text-8xl mb-4 sm:mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-xs sm:text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-lg sm:text-2xl font-semibold text-white mb-2 sm:mb-3">
                   {p.title}
                 </h3>
-                <p className="text-gray-400">{p.description}</p>
-                <div className="mt-4 text-white group-hover:text-gray-300 transition-colors">
+                <p className="text-sm sm:text-base text-gray-400">{p.description}</p>
+                <div className="mt-3 sm:mt-4 text-white group-hover:text-gray-300 transition-colors text-sm sm:text-base">
                   Click to view details →
                 </div>
               </div>
@@ -391,27 +369,27 @@ function ProjectsPage({ onSelectProject }) {
   ];
 
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-4">Projects</h1>
-        <p className="text-xl text-gray-300 mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-4">Projects</h1>
+        <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12">
           Engineering and technical projects
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
           {projects.map((p) => (
             <div
               key={p.id}
-              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[300px] sm:min-h-[400px]"
               onClick={() => onSelectProject(p)}
             >
-              <div className="p-8">
-                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
-                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
-                <h3 className="text-2xl font-semibold text-white mb-3">
+              <div className="p-6 sm:p-8">
+                <div className="text-6xl sm:text-8xl mb-4 sm:mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-xs sm:text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-lg sm:text-2xl font-semibold text-white mb-2 sm:mb-3">
                   {p.title}
                 </h3>
-                <p className="text-gray-400">{p.description}</p>
-                <div className="mt-4 text-white group-hover:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-400">{p.description}</p>
+                <div className="mt-3 sm:mt-4 text-white group-hover:text-gray-300 text-sm sm:text-base">
                   Click to view details →
                 </div>
               </div>
@@ -558,27 +536,27 @@ function InternshipPage({ onSelectProject }) {
   ];
 
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-4">Internship</h1>
-        <p className="text-xl text-gray-300 mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-4">Internship</h1>
+        <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12">
           Professional experience and work
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
           {projects.map((p) => (
             <div
               key={p.id}
-              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[300px] sm:min-h-[400px]"
               onClick={() => onSelectProject(p)}
             >
-              <div className="p-8">
-                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
-                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
-                <h3 className="text-2xl font-semibold text-white mb-3">
+              <div className="p-6 sm:p-8">
+                <div className="text-6xl sm:text-8xl mb-4 sm:mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-xs sm:text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-lg sm:text-2xl font-semibold text-white mb-2 sm:mb-3">
                   {p.title}
                 </h3>
-                <p className="text-gray-400">{p.description}</p>
-                <div className="mt-4 text-white group-hover:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-400">{p.description}</p>
+                <div className="mt-3 sm:mt-4 text-white group-hover:text-gray-300 text-sm sm:text-base">
                   Click to view details →
                 </div>
               </div>
@@ -672,27 +650,27 @@ function RocketryPage({ onSelectProject }) {
   ];
 
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-4">Rocketry</h1>
-        <p className="text-xl text-gray-300 mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-4">Rocketry</h1>
+        <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 sm:mb-12">
           Aerospace and rocketry projects
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
           {projects.map((p) => (
             <div
               key={p.id}
-              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[400px]"
+              className="group bg-gray-900 border border-gray-800 hover:border-white transition-all duration-300 cursor-pointer transform hover:-translate-y-2 min-h-[300px] sm:min-h-[400px]"
               onClick={() => onSelectProject(p)}
             >
-              <div className="p-8">
-                <div className="text-8xl mb-6 text-center">{p.thumbnail}</div>
-                <div className="text-sm text-gray-400 mb-2">{p.category}</div>
-                <h3 className="text-2xl font-semibold text-white mb-3">
+              <div className="p-6 sm:p-8">
+                <div className="text-6xl sm:text-8xl mb-4 sm:mb-6 text-center">{p.thumbnail}</div>
+                <div className="text-xs sm:text-sm text-gray-400 mb-2">{p.category}</div>
+                <h3 className="text-lg sm:text-2xl font-semibold text-white mb-2 sm:mb-3">
                   {p.title}
                 </h3>
-                <p className="text-gray-400">{p.description}</p>
-                <div className="mt-4 text-white group-hover:text-gray-300">
+                <p className="text-sm sm:text-base text-gray-400">{p.description}</p>
+                <div className="mt-3 sm:mt-4 text-white group-hover:text-gray-300 text-sm sm:text-base">
                   Click to view details →
                 </div>
               </div>
@@ -727,40 +705,40 @@ function ProjectDetailPage({ project, onBack }) {
   }, []);
 
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-5xl mx-auto">
         <button
           onClick={onBack}
-          className="mb-8 text-white hover:text-gray-300 flex items-center gap-2"
+          className="mb-6 sm:mb-8 text-white hover:text-gray-300 flex items-center gap-2 text-sm sm:text-base"
         >
           ← Back
         </button>
         <div
-          className={`text-center mb-12 transition-all duration-700 ${
+          className={`text-center mb-8 sm:mb-12 transition-all duration-700 ${
             visibleSections.has("header")
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-10"
           }`}
           data-section="header"
         >
-          <div className="text-9xl mb-6">{project.thumbnail}</div>
-          <div className="text-sm text-gray-400 mb-2">{project.category}</div>
-          <h1 className="text-5xl font-bold text-white mb-4">
+          <div className="text-7xl sm:text-9xl mb-4 sm:mb-6">{project.thumbnail}</div>
+          <div className="text-xs sm:text-sm text-gray-400 mb-2">{project.category}</div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">
             {project.title}
           </h1>
         </div>
         <div
-          className={`bg-gray-900 p-8 border border-gray-800 mb-8 transition-all duration-700 ${
+          className={`bg-gray-900 p-6 sm:p-8 border border-gray-800 mb-6 sm:mb-8 transition-all duration-700 ${
             visibleSections.has("overview")
               ? "opacity-100 translate-x-0"
               : "opacity-0 -translate-x-20"
           }`}
           data-section="overview"
         >
-          <h2 className="text-2xl font-semibold text-white mb-4">
+          <h2 className="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">
             About This Project
           </h2>
-          <p className="text-gray-300 text-lg leading-relaxed mb-6">
+          <p className="text-gray-300 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
             {project.fullDescription}
           </p>
         </div>
@@ -769,17 +747,17 @@ function ProjectDetailPage({ project, onBack }) {
           project.models3D &&
           project.models3D.length > 0 && (
             <div
-              className={`mb-8 transition-all duration-700 ${
+              className={`mb-6 sm:mb-8 transition-all duration-700 ${
                 visibleSections.has("3dmodel")
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-10"
               }`}
               data-section="3dmodel"
             >
-              <h2 className="text-2xl font-semibold text-white mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4 sm:mb-6">
                 3D Models
               </h2>
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {project.models3D.map((model, i) => (
                   <div key={i}>
                     <h3 className="text-xl font-semibold text-white mb-3">
