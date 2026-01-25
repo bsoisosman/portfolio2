@@ -88,17 +88,6 @@ export default function Portfolio() {
                   <button
                     onClick={() => {
                       setSelectedProject(null);
-                      setCurrentPage("about");
-                    }}
-                    className={`${
-                      currentPage === "about" ? "text-white" : "text-gray-400"
-                    } hover:text-white transition-colors`}
-                  >
-                    About
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
                       setCurrentPage("contact");
                     }}
                     className={`${
@@ -991,11 +980,52 @@ function AboutPage() {
 }
 
 function ContactPage() {
+  const contactInfo = [
+    {
+      icon: "📧",
+      label: "Email",
+      value: "Arjunreddy0221@gmail.com",
+      href: "mailto:Arjunreddy0221@gmail.com",
+      type: "email",
+    },
+    {
+      icon: "💼",
+      label: "LinkedIn",
+      value: "arjunreddy08",
+      href: "https://www.linkedin.com/in/arjunreddy08",
+      type: "link",
+    },
+  ];
+
   return (
     <div className="min-h-screen px-6 py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold text-white mb-8">Contact</h1>
-        <p className="text-xl text-gray-300">Get in touch...</p>
+        <p className="text-xl text-gray-300 mb-12">
+          Get in touch through any of these channels:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {contactInfo.map((contact, i) => (
+            <a
+              key={i}
+              href={contact.href}
+              target={contact.type === "link" ? "_blank" : "_self"}
+              rel={contact.type === "link" ? "noopener noreferrer" : ""}
+              className="group bg-gray-900 border border-gray-800 hover:border-white p-8 transition-all duration-300 transform hover:-translate-y-2"
+            >
+              <div className="text-6xl mb-4">{contact.icon}</div>
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                {contact.label}
+              </h2>
+              <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
+                {contact.value}
+              </p>
+              <p className="text-gray-400 text-sm mt-3">
+                {contact.type === "link" ? "Open in new tab →" : "Click to email →"}
+              </p>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
