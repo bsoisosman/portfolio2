@@ -431,7 +431,7 @@ function InternshipPage({ onSelectProject }) {
       category: "Internship",
       thumbnail: "🖥️",
       description: "CAD Designs for Chip Apparatus",
-      fullDescription: "...",
+      fullDescription: "3D CAD models for IC packaging and die attachment apparatus.",
       pdfs: [],
       show3DViewer: true,
       models3D: [
@@ -544,7 +544,7 @@ function InternshipPage({ onSelectProject }) {
       category: "Intership",
       thumbnail: "🔌",
       description: "Primary Connection for UVEX Project",
-      fullDescription: "...",
+      fullDescription: "PCB design for the UVEX project.",
       pdfs: [],
       showImageGallery: true,
       images: [
@@ -594,11 +594,11 @@ function RocketryPage({ onSelectProject }) {
   const projects = [
     {
       id: 1,
-      title: "Rocketry Fuel",
+      title: "Rocket Fuel",
       category: "Rocketry",
       thumbnail: "🚀",
       description: "Making and Testing Rocket Fuel",
-      fullDescription: "Details here.",
+      fullDescription: "Making and Testing Rocket Fuel.",
       pdfs: [],
       showImageGallery: true,
       images: [
